@@ -1,0 +1,100 @@
+plugins {
+    id("io.micronaut.library") version "1.4.2"
+    id("maven-publish")
+    id("signing")
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+}
+
+group = "com.github.jasontypescodes"
+version = "0.1.0"
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = 'mn-config-based-auth'
+            version = project.version
+
+            from components.java
+
+            pom {
+               name = 'Config Based Auth for the Micronaut Framework'
+               description = 'A Micronaut Security AuthenticationProvider for prototyping auth-enabled services by providing account information in configuration.'
+               url = 'https://github.com/JasonTypesCodes/mn-config-based-auth/'
+               licenses {
+                   license {
+                       name = 'The Apache License, Version 2.0'
+                       url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                   }
+               }
+               developers {
+                   developer {
+                       id = 'jasontypescodes'
+                       name = 'Jason Schindler'
+                       email = 'jason@types.codes'
+                   }
+               }
+               scm {
+                   connection = 'scm:git:git://github.com/JasonTypesCodes/mn-config-based-auth.git'
+                   developerConnection = 'scm:git:git://github.com/JasonTypesCodes/mn-config-based-auth.git'
+                   url = 'https://github.com/JasonTypesCodes/mn-config-based-auth/'
+               }
+           }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.maven
+}
+
+nexusPublishing {
+   repositories {
+       sonatype {
+           def ossUser = System.getenv("SONATYPE_USERNAME") ?: project.hasProperty("sonatypeOssUsername") ? project.sonatypeOssUsername : ''
+           def ossPass = System.getenv("SONATYPE_PASSWORD") ?: project.hasProperty("sonatypeOssPassword") ? project.sonatypeOssPassword : ''
+           def ossStagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID") ?: project.hasProperty("sonatypeOssStagingProfileId") ? project.sonatypeOssStagingProfileId : ''
+           nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+           snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+           username = ossUser
+           password = ossPass
+           stagingProfileId = ossStagingProfileId
+       }
+   }
+}
+
+ext."signing.keyId" = project.hasProperty("signing.keyId") ? project.getProperty('signing.keyId') : System.getenv('SIGNING_KEY_ID')
+ext."signing.password" = project.hasProperty("signing.password") ? project.getProperty('signing.password') : System.getenv('SIGNING_PASSPHRASE')
+ext."signing.secretKeyRingFile" = project.hasProperty("signing.secretKeyRingFile") ? project.getProperty('signing.secretKeyRingFile') : (System.getenv('SECRING_FILE')?:"${System.properties['user.home']}${File.separator}.gnupg${File.separator}secring.gpg")
+
+repositories {
+    mavenCentral()
+}
+
+micronaut {
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.github.jasontypescodes.mn.configauth")
+    }
+}
+
+dependencies {
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut.security:micronaut-security")
+
+    testAnnotationProcessor("io.micronaut:micronaut-inject-java")
+    testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("io.micronaut:micronaut-http-server-netty")
+    testImplementation("io.micronaut.security:micronaut-security-jwt")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("1.8")
+    targetCompatibility = JavaVersion.toVersion("1.8")
+}
