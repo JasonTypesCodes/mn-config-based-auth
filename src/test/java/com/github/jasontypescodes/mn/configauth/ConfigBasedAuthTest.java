@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.github.jasontypescodes.mn.configauth.config.ConfigAuthAccount;
 import com.github.jasontypescodes.mn.configauth.config.ConfigAuthConfiguration;
@@ -44,6 +43,9 @@ import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.endpoints.introspection.IntrospectionResponse;
 import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 
+import static io.micronaut.core.util.CollectionUtils.mapOf;
+import static io.micronaut.core.util.CollectionUtils.setOf;
+
 @SuppressWarnings("unchecked")
 public class ConfigBasedAuthTest {
 	String VALID_ACCOUNT = "validAccount";
@@ -58,32 +60,32 @@ public class ConfigBasedAuthTest {
 	String ROLE2 = "ROLE_2";
 	String ROLE3 = "ROLE_3";
 
-	PropertySource CONFIG_BASE = PropertySource.of("base", Map.of(
-		"micronaut.security", Map.of(
+	PropertySource CONFIG_BASE = PropertySource.of("base", mapOf(
+		"micronaut.security", mapOf(
 			"enabled", "true",
 			"authentication", "bearer",
 			"token.jwt.signatures.secret.generator.secret", "testsecret"
 		),
-		"config-based-auth", Map.of(
-			"accounts", Map.of(
-				VALID_ACCOUNT, Map.of(
-					"roles", Set.of(ROLE1, ROLE3),
+		"config-based-auth", mapOf(
+			"accounts", mapOf(
+				VALID_ACCOUNT, mapOf(
+					"roles", setOf(ROLE1, ROLE3),
 					"secret", VALID_SECRET,
-					"attributes", Map.of(
+					"attributes", mapOf(
 						TEST_ATT_KEY, TEST_ATT_VAL
 					)
 				),
-				ALT_ID_ACCOUNT, Map.of(
+				ALT_ID_ACCOUNT, mapOf(
 					"identity", ALT_ID_IDENTITY,
 					"secret", ALT_ID_SECRET,
-					"roles", Set.of(ROLE2)
+					"roles", setOf(ROLE2)
 				)
 			)
 		)
 	), 1);
 
-	PropertySource ENABLED = PropertySource.of("enabled", Map.of(
-		"config-based-auth", Map.of(
+	PropertySource ENABLED = PropertySource.of("enabled", mapOf(
+		"config-based-auth", mapOf(
 			"enabled", "true"
 		)
 	), 2);
@@ -118,7 +120,7 @@ public class ConfigBasedAuthTest {
 
 		assertEquals(VALID_SECRET, anAccount.getSecret());
 		assertEquals(2, anAccount.getRoles().size());
-		assertTrue(anAccount.getRoles().containsAll(Set.of(ROLE1, ROLE3)));
+		assertTrue(anAccount.getRoles().containsAll(setOf(ROLE1, ROLE3)));
 		assertEquals(TEST_ATT_VAL, anAccount.getAttributes().get(TEST_ATT_KEY));
 	}
 
