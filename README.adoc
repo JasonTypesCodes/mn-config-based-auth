@@ -1,17 +1,16 @@
 = Config Based Auth for the Micronaut Framework
 
-This module provides an implementation of Micronaut Security's (AuthenticationProvider)[] which loads principal information
+This module provides an implementation of Micronaut Security's https://micronaut-projects.github.io/micronaut-security/latest/api/io/micronaut/security/authentication/AuthenticationProvider.html[AuthenticationProvider] which loads principal information
 from application configuration.
 
-This is useful for providing basic principal information for security-enabled services.  Instances where I find this approach useful are:
+This is useful for providing basic principal information for security-enabled services.  Instances such as:
 
 * Prototyping of security-enabled services without setting up an auth system
 * Providing a mechanism for testing security-aware code
 
-Examples below will show configuration in YAML, but any [Micronaut configuration mechanism]() should work .
+Examples below will show configuration in YAML, but any https://docs.micronaut.io/latest/guide/#config[Micronaut configuration mechanism] should work.
 
-*WARNING*: It is very unlikely that this approach is suitable for a real production system.
-This module does not make any attempt to encode, encrypt, or otherwise obfuscate any information.
+*WARNING*: This module does not make any attempt to encode, encrypt, or otherwise obfuscate any information.
 In particular, account information for publicly available systems should never be stored in ways that make it discoverable to audiences that should not have that information.
 
 == General Configuration
@@ -25,6 +24,8 @@ config-based-auth:
       roles:
         - VIEW
         - COMMENT
+        - CREATE
+        - DESTROY
       attributes:
         favorite_color: pink
     bob:
@@ -33,8 +34,6 @@ config-based-auth:
       roles:
         - VIEW
         - COMMENT
-        - CREATE
-        - DESTROY
       attributes:
         favorite_color: brown
 ```
