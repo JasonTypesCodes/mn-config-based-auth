@@ -85,6 +85,9 @@ micronaut {
 }
 
 dependencies {
+    // Added to remove the warning: unknown enum constant When.MAYBE error
+    compileOnly("com.google.code.findbugs:jsr305")
+
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.security:micronaut-security")
     implementation("io.micronaut.reactor:micronaut-reactor")
