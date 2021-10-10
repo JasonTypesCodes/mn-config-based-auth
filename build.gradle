@@ -1,12 +1,12 @@
 plugins {
-    id("io.micronaut.library") version "1.5.4"
+    id("io.micronaut.library") version "2.0.6"
     id("maven-publish")
     id("signing")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
 group = "com.github.jasontypescodes"
-version = "1.0.0"
+version = "2.0.0"
 
 java {
     withJavadocJar()
@@ -87,6 +87,7 @@ micronaut {
 dependencies {
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.security:micronaut-security")
+    implementation("io.micronaut.reactor:micronaut-reactor")
 
     testAnnotationProcessor("io.micronaut:micronaut-inject-java")
     testImplementation("io.micronaut:micronaut-http-client")
