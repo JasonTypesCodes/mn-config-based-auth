@@ -38,3 +38,9 @@ config-based-auth:
         favorite_color: brown
 ```
 
+.Version Compatibility
+|============================
+| Version | Micronaut Version
+| 1.x.x   | 2.x.x
+|============================
+
