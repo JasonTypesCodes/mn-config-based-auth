@@ -19,8 +19,6 @@ package com.github.jasontypescodes.mn.configauth;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import com.github.jasontypescodes.mn.configauth.config.ConfigAuthAccount;
 import com.github.jasontypescodes.mn.configauth.config.ConfigAuthConfiguration;
 
@@ -36,8 +34,8 @@ import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.micronaut.security.authentication.UserDetails;
-import io.reactivex.Maybe;
+import jakarta.inject.Singleton;
+import reactor.core.publisher.Mono;
 
 /**
  * An {@code AuthenticationProvider} that uses
@@ -89,7 +87,7 @@ public class ConfigBasedAuthProvider implements AuthenticationProvider {
 		HttpRequest<?> httpRequest,
 		AuthenticationRequest<?, ?> authRequest
 	) {
-		return Maybe.<AuthenticationResponse>create(emitter -> {
+		return Mono.<AuthenticationResponse>create(emitter -> {
 			final String identity = (String) authRequest.getIdentity();
 
 			final ConfigAuthAccount account = accounts.get(identity);
@@ -103,11 +101,11 @@ public class ConfigBasedAuthProvider implements AuthenticationProvider {
 
 			if (account != null && account.getSecret().equals(authRequest.getSecret())) {
 				log.debug("'{}' authenticated successfully", identity);
-				emitter.onSuccess(new UserDetails(identity, account.getRoles(), account.getAttributes()));
+				emitter.success(AuthenticationResponse.success(identity, account.getRoles(), account.getAttributes()));
 			} else {
 				log.debug("Authentication failed for '{}'", identity);
-				emitter.onError(new AuthenticationException(new AuthenticationFailed()));
+				emitter.error(new AuthenticationException(new AuthenticationFailed()));
 			}
-		}).toFlowable();
+		});
 	}
 }
