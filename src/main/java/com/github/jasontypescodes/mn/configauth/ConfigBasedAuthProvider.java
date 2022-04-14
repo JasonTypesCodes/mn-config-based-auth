@@ -65,7 +65,7 @@ public class ConfigBasedAuthProvider implements AuthenticationProvider {
 			for (String key : this.config.getAccounts().keySet()) {
 				ConfigAuthAccount account = config.getAccounts().get(key);
 				String identity = StringUtils.isEmpty(account.getIdentity()) ? key : account.getIdentity();
-				log.debug("Found account '{}' with identity '{}", key, identity);
+				log.debug("Found account '{}' with identity '{}'", key, identity);
 				accounts.put(identity, account);
 			}
 		} else {
